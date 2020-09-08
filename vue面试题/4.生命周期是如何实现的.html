@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生命周期是如何实现的</title>
+</head>
+
+<body>
+    <script>
+        function mergeHook(parentValue, childValue) {
+            if (childValue) {
+                if (parentValue) {
+                    return parentValue.concat(childValue);
+                } else {
+                    return [childValue];
+                }
+            } else {
+                return parentValue;
+            }
+        };
+
+        function mergeOptions(parent, child) {
+            let opt = {};
+            for (const key in child) {
+                opt[key] = mergeHook(parent[key], child[key]);
+            }
+
+            return opt;
+        };
+
+        function callHook(vm, hookName) {
+            vm.option[hookName] && vm.option[hookName].forEach(hook => hook());
+        };
+
+        function Vue(option) {
+            this.option = mergeOptions(this.constructor.option, option);
+
+            callHook(this, 'beforeCreate');
+            callHook(this, 'created');
+        };
+
+        Vue.mixin = function (option) {
+            this.option = mergeOptions(this.option, option);
+        }
+
+        Vue.option = {};
+
+        Vue.mixin({
+            beforeCreate() {
+                console.log('this is mixin beforecreate');
+            },
+            created() {
+                console.log('this is mixin created');
+            }
+        });
+
+        new Vue({
+            beforeCreate() {
+                console.log('this is child beforecreate');
+            },
+            created() {
+                console.log('this is child created');
+            }
+        });
+    </script>
+</body>
+
+</html>

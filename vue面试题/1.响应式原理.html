@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>响应式原理</title>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <script>
+        let state = { count: 0 };
+        let active = null;
+        defineReactive(state);
+        
+        let watcher = (fn) => {
+            active = fn;
+            fn();
+            active = null;
+        };
+        watcher(() => {
+            app.innerHTML = state.count; // get
+        });
+        watcher(() => {
+            console.log(state.count); // get
+        });
+
+        function defineReactive(obj) {
+            for (let key in obj) {
+                let value = obj[key];
+                let dep = [];
+                Object.defineProperty(obj, key, {
+                    get() {
+                        if (active) {
+                            dep.push(active);
+                        };
+                        return value;
+                    },
+                    set(newValue) {
+                        value = newValue;
+                        dep.forEach(watcher => watcher());
+                    }
+                });
+            }
+        };
+    </script>
+</body>
+
+</html>

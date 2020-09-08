@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>template 编译原理</title>
+</head>
+
+<body>
+    <script src="node_modules/vue-template-compiler/browser.js"></script>
+    <script>
+        // template=> ast => codegen => with + function 实现生成 render 方法
+        let { ast, render } = Vuetemplatecompiler.compile(`<div>{{aaa}}</div>`);
+        console.log(ast, render)
+        // 摸板引的实现原理 with + new Function
+        console.log(new Function(render))
+        // render 方法执行完毕后生成的是虚拟dom
+        // with(this){return _c('div',[_s(aaa)])}
+        // 代码生成
+    </script>
+</body>
+
+</html>

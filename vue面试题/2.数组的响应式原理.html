@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数组的响应式原理</title>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <script>
+        // 改写数组的 push、shift、pop、unshift、splice、sort、reverse 方法
+        let state = [1, 2, 3];
+
+        let originalArray = Array.prototype;
+        let arrayMethods = Object.create(originalArray); // 不是深拷贝
+
+        defineReactive(state);
+        function defineReactive(obj) {
+            // 函数劫持
+            arrayMethods.push = function (...args) {
+                originalArray.push.call(this, ...args);
+                render();
+            }
+
+            obj.__proto__ = arrayMethods;
+        };
+
+        render();
+        function render() {
+            app.innerHTML = state;
+        };
+    </script>
+</body>
+
+</html>

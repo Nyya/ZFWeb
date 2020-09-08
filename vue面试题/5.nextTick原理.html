@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nextTick 原理</title>
+</head>
+
+<body>
+    <script>
+        let cbs = [];
+        let pending = false;
+
+        function flushCallbacks() {
+            cbs.forEach(fn => fn());
+            pending = false;
+        };
+
+        function nextTick(fn) {
+            cbs.push(fn);
+            if (!pending) {
+                pending = true;
+                Promise.resolve().then(flushCallbacks);
+            }
+        };
+
+        function render() {
+            console.log('render');
+        };
+
+        nextTick(render);
+        nextTick(render);
+        nextTick(render);
+
+        console.log(1);
+        console.log(2);
+        console.log(3);
+    </script>
+</body>
+
+</html>
